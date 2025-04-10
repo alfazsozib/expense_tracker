@@ -1,10 +1,11 @@
 import './App.css'
+import SignUp from './components/SignUp/SignUp'
 
 function App() {
  
   return (
     <>
-      <div className='text-6xl'>Hello World</div>
+    <SignUp></SignUp>
     </>
   )
 }
