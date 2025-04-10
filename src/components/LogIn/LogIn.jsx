@@ -5,7 +5,7 @@ const LogIn = () => {
   return (
     <div>
       <div className="flex w-full">
-        {/* Left Side - Signup Form */}
+        {/* Left Side - LogIn Form */}
         <div className="w-[60%]  px[137px] pt-[150px] flex flex-col justify-center items-center bg-white p-10">
           <h1 className="text-4xl font-freehand mb-10">Welcome</h1>
 
