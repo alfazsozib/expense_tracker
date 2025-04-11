@@ -1,17 +1,16 @@
 import './App.css'
-import Profile from './components/Dashboard/Profile'
+// import Profile from './components/Dashboard/Profile'
 // import Home from './components/Dashboard/Home'
-// import SignUp from './components/SignUp/SignUp'
-// import LogIn from './components/LogIn/LogIn'
+import SignUp from './components/SignUp/SignUp'
 
 function App() {
  
   return (
     <>
-    {/* <SignUp></SignUp> */}
+    <SignUp></SignUp>
     {/* <LogIn></LogIn> */}
     {/* <Home></Home> */}
-    <Profile></Profile>
+    {/* <Profile></Profile> */}
     </>
   )
 }
