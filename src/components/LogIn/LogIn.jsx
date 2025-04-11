@@ -4,7 +4,7 @@ import Image_1 from "../../assets/1.png";
 const LogIn = () => {
   return (
     <div>
-      <div className="flex w-full">
+      <div className="flex w-[1440px] justify-center mx-auto shadow-md">
         {/* Left Side - LogIn Form */}
         <div className="w-[60%]  px[137px] pt-[150px] flex flex-col justify-center items-center bg-white p-10">
           <h1 className="text-4xl font-freehand mb-10">Welcome</h1>

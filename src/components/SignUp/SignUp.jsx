@@ -3,10 +3,10 @@ import Image_1 from "../../assets/1.png";
 
 const SignUp = () => {
   return (
-    <div>
-      <div className="flex w-full">
+    <div className="">
+      <div className="flex w-[1440px] justify-center mx-auto shadow-md">
         {/* Left Side - Signup Form */}
-        <div className="w-[60%]  px[137px] pt-[150px] flex flex-col justify-center items-center bg-white p-10">
+        <div className="w-[45%]  px[137px] pt-[150px] flex flex-col justify-center items-center bg-white p-10">
           <h1 className="text-4xl font-freehand mb-10">Welcome</h1>
 
           <div className="w-full max-w-md">
@@ -76,7 +76,7 @@ const SignUp = () => {
         </div>
 
         {/* Right Side - Dashboard Preview */}
-        <div className="w-[40%] h-screen bg-[#CAF0F8] flex justify-end items-center rounded-l-[10px]">
+        <div className="w-[55%] h-screen bg-[#CAF0F8] flex justify-end items-center rounded-l-[10px]">
           <div className="bg-white w-[620px] h-[807px] rounded flex justify-end items-center">
             <img
               src={Image_1}
