@@ -1,5 +1,6 @@
 import './App.css'
-import Home from './components/Dashboard/Home'
+import Profile from './components/Dashboard/Profile'
+// import Home from './components/Dashboard/Home'
 // import SignUp from './components/SignUp/SignUp'
 // import LogIn from './components/LogIn/LogIn'
 
@@ -9,7 +10,8 @@ function App() {
     <>
     {/* <SignUp></SignUp> */}
     {/* <LogIn></LogIn> */}
-    <Home></Home>
+    {/* <Home></Home> */}
+    <Profile></Profile>
     </>
   )
 }
