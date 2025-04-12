@@ -47,10 +47,6 @@ const LogIn = () => {
             </p>
           </div>
 
-          <div className="flex gap-2 mt-[10%]">
-            <div className="w-[170px] h-2 bg-sky-400 rounded-full"></div>
-            <div className="w-[170px] h-2 bg-gray-300 rounded-full"></div>
-          </div>
         </div>
 
         {/* Right Side - Dashboard Preview */}
