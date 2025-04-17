@@ -6,14 +6,14 @@ const authRoutes = require('./routes/auth');
 const expenseRoutes = require('./routes/expense');
 const budgetRoutes = require('./routes/budget');
 const { protect } = require('./middleware/auth'); // Auth middleware (will create in next step)
-
+const cors = require("cors")
 dotenv.config();
 connectDB();
 
 const app = express();
-
-// Middleware
-app.use(bodyParser.json());
+app.use(cors({ origin: 'http://localhost:5173', credentials: true })); // 👈 important
+app.use(express.json());
+// app.use(bodyParser.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
