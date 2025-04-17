@@ -25,7 +25,7 @@ const UserControl = () => {
             className="w-[120px] h-[120px] object-cover mb-2"
           />
           <p className="text-center font-medium text-xl text-[#000000b3]">
-            Alfaz Hossain
+            Bob John
           </p>
 
           <div className="mt-5 w-[185px] h-2 bg-[#ffffff99] rounded-lg"></div>
