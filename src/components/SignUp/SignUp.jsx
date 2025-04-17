@@ -1,5 +1,6 @@
 import React from "react";
 import Image_1 from "../../assets/1.png";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   return (
@@ -57,16 +58,16 @@ const SignUp = () => {
 
             <button
               name="submit"
-              className="w-full bg-sky-300 text-[#000000bf] rounded mb-4 text-xl py-3 "
+              className="w-full bg-sky-300 cursor-pointer hover:bg-sky-500 text-[#000000bf] rounded mb-4 text-xl py-3 "
             >
               Create Account
             </button>
 
             <p className="text-sm mt-5">
               Already have an account?
-              <a href="#" className="text-black underline ml-2 ">
+                <Link to={'/'} className="text-black underline ml-2 ">
                 Login Here
-              </a>
+                </Link>
             </p>
           </div>
         </div>

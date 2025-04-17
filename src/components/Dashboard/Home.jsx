@@ -3,47 +3,65 @@ import { FaPowerOff, FaUser } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
 import userImage from "../../assets/userImage.png"; // Replace with correct path
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
     <div className="flex min-h-screen max-w-[1440px] mx-auto bg-[#CAF0F8]">
       {/* Sidebar */}
       <div className="w-[240px] bg-[#CAF0F8] flex flex-col items-center justify-between pt-[60px] pb-[86px]">
-        <div className="flex flex-col items-center">
-          <img
-            src={userImage}
-            alt="Profile"
-            className="w-[120px] h-[120px] object-cover mb-2"
-          />
-          <p className="text-center font-medium text-xl text-[#000000b3]">
-            Alfaz Hossain
-          </p>
+      <div className="flex flex-col items-center">
+        <img
+          src={userImage}
+          alt="Profile"
+          className="w-[120px] h-[120px] object-cover mb-2"
+        />
+        <p className="text-center font-medium text-xl text-[#000000b3]">
+          Alfaz Hossain
+        </p>
 
-          <div className="mt-5 w-[185px] h-2 bg-[#ffffff99] rounded-lg"></div>
-          <div className="mt-8 space-y-4 w-full">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200">
-              <GoHomeFill className="w-[30px] h-[30px]" />
-              <span className="text-lg font-light text-[#000000b3]">HOME</span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200">
-              <FaUser className="w-[30px] h-[30px]" />
-              <span className="text-lg font-light text-[#000000b3]">
-                PROFILE
-              </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200">
-              <PiSlidersHorizontalFill className="w-[30px] h-[30px]" />
-              <span className="text-lg font-light text-[#000000b3]">
-                USER CONTROL
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center mt-8 gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200">
-          <FaPowerOff className="w-[22px] h-[22px]" />
-          <span className="text-lg font-light text-[#000000b3]">SIGN OUT</span>
+        <div className="mt-5 w-[185px] h-2 bg-[#ffffff99] rounded-lg"></div>
+
+        <div className="mt-8 space-y-4 w-full">
+          <Link
+            to="/"
+            className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
+          >
+            <GoHomeFill className="w-[30px] h-[30px]" />
+            <span className="text-lg font-light text-[#000000b3]">HOME</span>
+          </Link>
+
+          <Link
+            to="/profile"
+            className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
+          >
+            <FaUser className="w-[30px] h-[30px]" />
+            <span className="text-lg font-light text-[#000000b3]">PROFILE</span>
+          </Link>
+
+          <Link
+            to="/user-control"
+            className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
+          >
+            <PiSlidersHorizontalFill className="w-[30px] h-[30px]" />
+            <span className="text-lg font-light text-[#000000b3]">
+              USER CONTROL
+            </span>
+          </Link>
         </div>
       </div>
+
+      <div className="flex items-center mt-8 gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200">
+        <FaPowerOff className="w-[22px] h-[22px]" />
+        
+          <Link to={'/login'}
+          className="text-lg font-light text-[#000000b3]"
+          >
+            SIGN OUT
+          </Link>
+      </div>
+    </div>
+  
 
       {/* Main Content */}
       <div className="bg-[#CAF0F8] w-full h-screen overflow-y-auto p-12">

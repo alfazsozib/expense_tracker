@@ -1,6 +1,6 @@
 import React from "react";
 import Image_1 from "../../assets/1.png";
-
+import { Link } from "react-router-dom";
 const LogIn = () => {
   return (
     <div className="flex justify-center items-center h-screen">
@@ -34,16 +34,17 @@ const LogIn = () => {
 
             <button
               name="submit"
-              className="w-full bg-sky-300 text-[#000000bf] rounded mb-4 text-xl py-3"
+              className="w-full bg-sky-300 cursor-pointer hover:bg-sky-500 text-[#000000bf] rounded mb-4 text-xl py-3"
             >
               Log In
             </button>
 
             <p className="text-[#000] text-xl font-normal mt-[19px] text-center flex justify-center flex-col">
               Or
-              <a href="#" className="text-xl font-normal text-[#000] mt-3">
-                Create an Account
-              </a>
+
+                <Link to={'/signup'} className="text-xl font-normal text-[#000] mt-3">
+                  Create an Account
+                </Link>
             </p>
           </div>
 
