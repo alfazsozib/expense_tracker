@@ -1,3 +1,4 @@
+// LogIn.js
 import React, { useState } from "react";
 import Image_1 from "../../assets/1.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,7 +11,7 @@ const LogIn = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -19,7 +20,11 @@ const LogIn = () => {
       const data = await res.json();
 
       if (res.ok) {
-        navigate("/dashboard"); // Redirect to dashboard
+        // Store the token in localStorage
+        localStorage.setItem("token", data.token);
+
+        // Redirect to dashboard
+        navigate("/dashboard");
       } else {
         setErrorMsg(data.message);
       }
