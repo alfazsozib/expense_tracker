@@ -1,17 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaPowerOff, FaUser } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
-import userImage from "../../assets/userImage.png"; // Replace with correct path
+import userImage from "../../assets/userImage.png";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const UserControl = () => {
   const navigate = useNavigate();
 
+  const [expenseNote, setExpenseNote] = useState("");
+  const [expenseAmount, setExpenseAmount] = useState("");
+  const [budgetMonth, setBudgetMonth] = useState("");
+  const [budgetAmount, setBudgetAmount] = useState("");
+
   const handleLogout = () => {
-    // Remove token and redirect to login page
     localStorage.removeItem("token");
     navigate("/login");
+  };
+
+  const handleAddExpense = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/expenses",
+        {
+          note: expenseNote,
+          amount: expenseAmount,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Expense added!");
+      setExpenseNote("");
+      setExpenseAmount("");
+    } catch (err) {
+      alert("Failed to add expense");
+      console.error(err);
+    }
+  };
+
+  const handleAddBudget = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/budget",
+        {
+          month: budgetMonth,
+          amount: budgetAmount,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      alert("Budget added!");
+      setBudgetMonth("");
+      setBudgetAmount("");
+    } catch (err) {
+      alert("Failed to add budget");
+      console.error(err);
+    }
   };
 
   return (
@@ -71,14 +124,14 @@ const UserControl = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 bg-[#CAF0F8] flex items-center justify-center pt-[25px] pb-[25px]">
-        <div className="w-[1125px] h-full bg-white rounded-[20px] flex flex-col items-start p-10">
+      <div className="bg-[#CAF0F8] w-full h-screen overflow-y-auto p-12">
+        <div className="w-full bg-white rounded-[20px] p-6 mb-12">
           {/* Set a Monthly Expense */}
           <div className="mb-12 w-full">
             <p className="text-xl font-medium mb-6 text-black">
               Set a Monthly Expense:
             </p>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
               <div>
                 <p className="text[#000000bf] text-xl font-normal mb-2">
                   Category
@@ -86,7 +139,9 @@ const UserControl = () => {
                 <input
                   name="Category"
                   type="text"
-                  className="w-[430px] h-[45px] bg-[#E5E5E5] rounded px-3"
+                  value={expenseNote}
+                  onChange={(e) => setExpenseNote(e.target.value)}
+                  className="w-[300px] h-[45px] bg-[#E5E5E5] rounded px-3"
                 />
               </div>
               <div>
@@ -96,10 +151,15 @@ const UserControl = () => {
                 <input
                   name="Amount"
                   type="text"
+                  value={expenseAmount}
+                  onChange={(e) => setExpenseAmount(e.target.value)}
                   className="w-[430px] h-[45px] bg-[#E5E5E5] rounded px-3"
                 />
               </div>
-              <button className=" mt-9 py-2 px-4 bg-[#90E0EF] hover:bg-[#72bbc7] cursor-pointer rounded text-black text-xl font-medium">
+              <button
+                onClick={handleAddExpense}
+                className=" mt-9 py-2 px-4 bg-[#90E0EF] hover:bg-[#72bbc7] cursor-pointer rounded text-black text-xl font-medium"
+              >
                 Add Expense
               </button>
             </div>
@@ -118,7 +178,9 @@ const UserControl = () => {
                 <input
                   name="Month"
                   type="text"
-                  className="w-[430px] h-[45px] bg-[#E5E5E5] rounded px-3"
+                  value={budgetMonth}
+                  onChange={(e) => setBudgetMonth(e.target.value)}
+                  className="w-[300px] h-[45px] bg-[#E5E5E5] rounded px-3"
                 />
               </div>
               <div>
@@ -128,10 +190,15 @@ const UserControl = () => {
                 <input
                   name="Amount"
                   type="text"
+                  value={budgetAmount}
+                  onChange={(e) => setBudgetAmount(e.target.value)}
                   className="w-[430px] h-[45px] bg-[#E5E5E5] rounded px-3"
                 />
               </div>
-              <button className="mt-9 py-2 px-4 bg-[#90E0EF] hover:bg-[#72bbc7] cursor-pointer rounded text-black text-xl font-medium">
+              <button
+                onClick={handleAddBudget}
+                className="mt-9 py-2 px-4 bg-[#90E0EF] hover:bg-[#72bbc7] cursor-pointer rounded text-black text-xl font-medium"
+              >
                 Add Budget
               </button>
             </div>

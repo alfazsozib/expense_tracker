@@ -35,7 +35,6 @@ const Profile = () => {
             <label className="block text-sm text-gray-700 mb-1">Name</label>
             <input
               type="text"
-              defaultValue="Alfaz Hossain"
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none"
             />
           </div>

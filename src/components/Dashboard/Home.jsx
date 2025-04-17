@@ -1,24 +1,86 @@
-// Home.js
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPowerOff, FaUser } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
-import userImage from "../../assets/userImage.png"; // Replace with correct path
+import userImage from "../../assets/userImage.png";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Home = () => {
   const navigate = useNavigate();
-
+  const [summary, setSummary] = useState({
+    fixedBudget: 0,
+    fixedExpense: 0,
+    usedExpense: 0,
+  });
+  const [categorySummary, setCategorySummary] = useState([]);
+  
+  // Fetch token from localStorage
+  const token = localStorage.getItem("token");
+  
   useEffect(() => {
-    // Check if token exists when page loads
-    const token = localStorage.getItem("token");
     if (!token) {
-      navigate("/login"); // Redirect to login if no token found
+      navigate("/login"); // redirect to login if no token
+      return;
     }
-  }, [navigate]);
+
+    const fetchData = async () => {
+      try {
+        // Fetch expenses and budget data
+        const resBudget = await axios.get("http://localhost:5000/api/budget", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(resBudget);
+
+        const resExpenses = await axios.get("http://localhost:5000/api/expenses", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(resExpenses);
+
+        // Calculate total budget and expenses
+        const totalBudget = resBudget.data.reduce((sum, b) => sum + b.amount, 0);
+        const totalExpenses = resExpenses.data.reduce((sum, e) => sum + e.amount, 0);
+
+        // Categorize budget and expenses
+        const categories = {};
+        resBudget.data.forEach((b) => {
+          if (!categories[b.category]) categories[b.category] = { budget: 0, expense: 0 };
+          categories[b.category].budget += b.amount;
+        });
+        resExpenses.data.forEach((e) => {
+          if (!categories[e.category]) categories[e.category] = { budget: 0, expense: 0 };
+          categories[e.category].expense += e.amount;
+        });
+
+        // Prepare summary data for each category
+        const categorySummaryData = Object.entries(categories).map(([cat, data]) => ({
+          category: cat,
+          budget: data.budget,
+          expense: data.expense,
+          diff: data.budget - data.expense,
+        }));
+
+        // Update the state with fetched data
+        setSummary({
+          fixedBudget: totalBudget,
+          fixedExpense: totalExpenses,
+          usedExpense: totalExpenses,
+        });
+
+        setCategorySummary(categorySummaryData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [navigate, token]);
 
   const handleLogout = () => {
-    // Remove token and redirect to login page
     localStorage.removeItem("token");
     navigate("/login");
   };
@@ -34,7 +96,7 @@ const Home = () => {
             className="w-[120px] h-[120px] object-cover mb-2"
           />
           <p className="text-center font-medium text-xl text-[#000000b3]">
-            Alfaz Hossain
+            John Doe
           </p>
 
           <div className="mt-5 w-[185px] h-2 bg-[#ffffff99] rounded-lg"></div>
@@ -84,62 +146,44 @@ const Home = () => {
         <div className="w-full bg-white rounded-[20px] p-6 mb-12">
           {/* Budget Cards */}
           <div className="flex flex-wrap justify-center gap-6 mb-8 mt-8">
-            {[{ title: "Fixed Budget", amount: "£500" }, { title: "Fixed Expense", amount: "£400" }, { title: "Used Expense", amount: "£300" }].map(
-              (item, index) => (
-                <div
-                  key={index}
-                  className="bg-white rounded-[20px] border-solid border-2 border-[#00000033] p-6 text-center"
-                >
-                  <h3 className="text-lg font-medium mb-2">{item.title}</h3>
-                  <p className="text-2xl font-bold">{item.amount}</p>
-                </div>
-              )
-            )}
-          </div>
-
-          {/* Recent Expenses */}
-          <div className="bg-white w-full max-w-[800px] rounded-[20px] border border-[#00000066] px-2 pb-4 pt-2 mb-6 m-auto overflow-auto">
-            <h2 className="text-center text-xl font-medium mb-4">Recent Expenses</h2>
-            <hr className="mb-4 m-auto" />
-            <div className="flex flex-col space-y-2 text-center">
-              <div className="flex justify-evenly min-w-[700px]">
-                <span className="bg-[#0000001a] px-3 py-1 rounded text-sm font-medium">
-                  Category
-                </span>
-                {Array(5).fill("Category 1").map((cat, i) => (
-                  <span key={i}>{cat}</span>
-                ))}
+            {[ 
+              { title: "Fixed Budget", amount: `£${summary.fixedBudget}` },
+              { title: "Fixed Expense", amount: `£${summary.fixedExpense}` },
+              { title: "Used Expense", amount: `£${summary.usedExpense}` },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-[20px] border-solid border-2 border-[#00000033] p-6 text-center"
+              >
+                <h3 className="text-lg font-medium mb-2">{item.title}</h3>
+                <p className="text-2xl font-bold">{item.amount}</p>
               </div>
-              <div className="flex justify-evenly min-w-[700px]">
-                <span className="bg-[#0000001a] px-3 py-1 rounded text-sm font-medium">
-                  Amount
-                </span>
-                {Array(5).fill("Amount 1").map((amt, i) => (
-                  <span key={i}>{amt}</span>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Monthly Expense Summary */}
           <div className="bg-white rounded-[20px] border border-[#00000066] p-6 w-full max-w-[800px] m-auto overflow-auto">
-            <h2 className="text-center text-xl font-medium mb-3">Monthly Expense Summary</h2>
+            <h2 className="text-center text-xl font-medium mb-3">
+              Monthly Expense Summary
+            </h2>
             <div className="grid grid-cols-4 gap-4 text-center font-medium mb-2 min-w-[700px]">
               <span className="bg-gray-200 px-3 py-1 rounded">Category</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Budget</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Expense</span>
-              <span className="bg-gray-200 px-3 py-1 rounded">-/+</span>
             </div>
-            {Array(6)
-              .fill(0)
-              .map((_, i) => (
-                <div key={i} className="grid grid-cols-4 gap-4 text-center text-sm py-1 min-w-[700px]">
-                  <span>Category 1</span>
-                  <span>Amount 1</span>
-                  <span>Amount 1</span>
-                  <span>Amount 1</span>
-                </div>
-              ))}
+            {categorySummary.map((item, i) => (
+              <div
+                key={i}
+                className="grid grid-cols-4 gap-4 text-center text-sm py-1 min-w-[700px]"
+              >
+                <span>{item.category}</span>
+                <span>£{item.budget}</span>
+                <span>£{item.expense}</span>
+                <span className={item.diff < 0 ? "text-red-600" : "text-green-600"}>
+                  £{item.diff}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
