@@ -19,8 +19,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/expenses', protect, expenseRoutes);  // Protecting the expense routes
-app.use('/api/budget', protect, budgetRoutes);    // Protecting the budget routes
+app.use('/api/expenses', expenseRoutes);  // Protecting the expense routes
+app.use('/api/budget', budgetRoutes);    // Protecting the budget routes
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

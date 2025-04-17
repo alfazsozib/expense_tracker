@@ -17,7 +17,7 @@ const Home = () => {
   
   // Fetch token from localStorage
   const token = localStorage.getItem("token");
-  
+
   useEffect(() => {
     if (!token) {
       navigate("/login"); // redirect to login if no token
@@ -28,16 +28,11 @@ const Home = () => {
       try {
         // Fetch expenses and budget data
         const resBudget = await axios.get("http://localhost:5000/api/budget", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         });
         console.log(resBudget);
 
         const resExpenses = await axios.get("http://localhost:5000/api/expenses", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        
         });
         console.log(resExpenses);
 
