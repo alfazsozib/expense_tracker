@@ -5,7 +5,8 @@ import { PiSlidersHorizontalFill } from "react-icons/pi";
 import userImage from "../../assets/userImage.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Chatbot from "../Chatbot"
+import Chatbot from "../Chatbot";
+
 const Home = () => {
   const navigate = useNavigate();
   const [summary, setSummary] = useState({
@@ -14,7 +15,9 @@ const Home = () => {
     usedExpense: 0,
   });
   const [categorySummary, setCategorySummary] = useState([]);
-  
+  const [newExpense, setNewExpense] = useState({ note: "", amount: 0, category: "" });
+  const [newBudget, setNewBudget] = useState({ amount: 0, category: "" });
+
   // Fetch token from localStorage
   const token = localStorage.getItem("token");
 
@@ -26,46 +29,64 @@ const Home = () => {
 
     const fetchData = async () => {
       try {
-        // Fetch expenses and budget data
         const resBudget = await axios.get("http://localhost:5000/api/budget", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(resBudget);
-
+    
         const resExpenses = await axios.get("http://localhost:5000/api/expenses", {
-        
+          headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(resExpenses);
-
-        // Calculate total budget and expenses
-        const totalBudget = resBudget.data.reduce((sum, b) => sum + b.amount, 0);
-        const totalExpenses = resExpenses.data.reduce((sum, e) => sum + e.amount, 0);
-
-        // Categorize budget and expenses
+    
+        console.log("Budget API response:", resBudget.data);
+        console.log("Expenses API response:", resExpenses.data);
+    
+        const budgetArray = Array.isArray(resBudget.data?.data)
+          ? resBudget.data.data
+          : Array.isArray(resBudget.data)
+          ? resBudget.data
+          : [];
+    
+        const expensesArray = Array.isArray(resExpenses.data?.data)
+          ? resExpenses.data.data
+          : Array.isArray(resExpenses.data)
+          ? resExpenses.data
+          : [];
+    
+        let totalBudget = 0;
+        let totalExpenses = 0;
         const categories = {};
-        resBudget.data.forEach((b) => {
-          if (!categories[b.category]) categories[b.category] = { budget: 0, expense: 0 };
+    
+        budgetArray.forEach((b) => {
+          totalBudget += b.amount;
+          if (!categories[b.category]) {
+            categories[b.category] = { budget: 0, expense: 0 };
+          }
           categories[b.category].budget += b.amount;
         });
-        resExpenses.data.forEach((e) => {
-          if (!categories[e.category]) categories[e.category] = { budget: 0, expense: 0 };
+    
+        expensesArray.forEach((e) => {
+          totalExpenses += e.amount;
+          if (!categories[e.category]) {
+            categories[e.category] = { budget: 0, expense: 0 };
+          }
           categories[e.category].expense += e.amount;
         });
-
-        // Prepare summary data for each category
-        const categorySummaryData = Object.entries(categories).map(([cat, data]) => ({
-          category: cat,
-          budget: data.budget,
-          expense: data.expense,
-          diff: data.budget - data.expense,
-        }));
-
-        // Update the state with fetched data
+    
+        const categorySummaryData = Object.entries(categories).map(
+          ([cat, data]) => ({
+            category: cat,
+            budget: data.budget,
+            expense: data.expense,
+            diff: data.budget - data.expense,
+          })
+        );
+    
         setSummary({
           fixedBudget: totalBudget,
           fixedExpense: totalExpenses,
           usedExpense: totalExpenses,
         });
-
+    
         setCategorySummary(categorySummaryData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -79,6 +100,10 @@ const Home = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
+
+
+
+  
 
   return (
     <div className="flex min-h-screen max-w-[1440px] mx-auto bg-[#CAF0F8]">
@@ -134,9 +159,8 @@ const Home = () => {
             SIGN OUT
           </button>
         </div>
-      <Chatbot />
+        <Chatbot />
       </div>
-
 
       {/* Main Content */}
       <div className="bg-[#CAF0F8] w-full h-screen overflow-y-auto p-12">
@@ -182,6 +206,7 @@ const Home = () => {
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </div>

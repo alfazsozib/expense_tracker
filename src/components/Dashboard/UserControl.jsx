@@ -22,7 +22,7 @@ const UserControl = () => {
   const handleAddExpense = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://localhost:5000/api/expenses",
         {
           note: expenseNote,
@@ -46,7 +46,7 @@ const UserControl = () => {
   const handleAddBudget = async () => {
     const token = localStorage.getItem("token");
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://localhost:5000/api/budget",
         {
           month: budgetMonth,
@@ -75,9 +75,9 @@ const UserControl = () => {
           <img
             src={userImage}
             alt="Profile"
-            className="w-[120px] h-[120px] object-cover mb-2"
+            className="w-[120px] h-[120px] object-cover mb-2 rounded-full border-4 border-white shadow-md"
           />
-          <p className="text-center font-medium text-xl text-[#000000b3]">
+          <p className="text-center font-semibold text-xl text-[#000000b3]">
             Bob John
           </p>
 
@@ -125,40 +125,40 @@ const UserControl = () => {
 
       {/* Main Content */}
       <div className="bg-[#CAF0F8] w-full h-screen overflow-y-auto p-12">
-        <div className="w-full bg-white rounded-[20px] p-6 mb-12">
+        <div className="w-full bg-white rounded-[20px] p-8 shadow-xl">
           {/* Set a Monthly Expense */}
-          <div className="mb-12 w-full">
-            <p className="text-xl font-medium mb-6 text-black">
+          <div className="mb-16 w-full">
+            <p className="text-2xl font-semibold mb-6 text-black">
               Set a Monthly Expense:
             </p>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-end space-x-6">
               <div>
-                <p className="text[#000000bf] text-xl font-normal mb-2">
+                <label className="text-[#000000bf] text-lg font-medium mb-2 block">
                   Category
-                </p>
+                </label>
                 <input
                   name="Category"
                   type="text"
                   value={expenseNote}
                   onChange={(e) => setExpenseNote(e.target.value)}
-                  className="w-[300px] h-[45px] bg-[#E5E5E5] rounded px-3"
+                  className="w-[280px] h-[45px] bg-[#E5E5E5] rounded px-4 text-black"
                 />
               </div>
               <div>
-                <p className="text-[#000000bf] text-xl font-normal mb-2">
+                <label className="text-[#000000bf] text-lg font-medium mb-2 block">
                   Amount
-                </p>
+                </label>
                 <input
                   name="Amount"
                   type="text"
                   value={expenseAmount}
                   onChange={(e) => setExpenseAmount(e.target.value)}
-                  className="w-[430px] h-[45px] bg-[#E5E5E5] rounded px-3"
+                  className="w-[280px] h-[45px] bg-[#E5E5E5] rounded px-4 text-black"
                 />
               </div>
               <button
                 onClick={handleAddExpense}
-                className=" mt-9 py-2 px-4 bg-[#90E0EF] hover:bg-[#72bbc7] cursor-pointer rounded text-black text-xl font-medium"
+                className="py-2.5 px-6 bg-[#00B4D8] hover:bg-[#0096c7] cursor-pointer rounded-lg text-white text-lg font-semibold"
               >
                 Add Expense
               </button>
@@ -167,37 +167,37 @@ const UserControl = () => {
 
           {/* Set a Monthly Budget */}
           <div className="w-full">
-            <p className="text-xl font-medium mb-6 text-black">
+            <p className="text-2xl font-semibold mb-6 text-black">
               Set a Monthly Budget:
             </p>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-end space-x-6">
               <div>
-                <p className="text-[#000000bf] text-xl font-normal mb-2">
+                <label className="text-[#000000bf] text-lg font-medium mb-2 block">
                   Month
-                </p>
+                </label>
                 <input
                   name="Month"
                   type="text"
                   value={budgetMonth}
                   onChange={(e) => setBudgetMonth(e.target.value)}
-                  className="w-[300px] h-[45px] bg-[#E5E5E5] rounded px-3"
+                  className="w-[280px] h-[45px] bg-[#E5E5E5] rounded px-4 text-black"
                 />
               </div>
               <div>
-                <p className="text-[#000000bf] text-xl font-normal mb-2">
+                <label className="text-[#000000bf] text-lg font-medium mb-2 block">
                   Amount
-                </p>
+                </label>
                 <input
                   name="Amount"
                   type="text"
                   value={budgetAmount}
                   onChange={(e) => setBudgetAmount(e.target.value)}
-                  className="w-[430px] h-[45px] bg-[#E5E5E5] rounded px-3"
+                  className="w-[280px] h-[45px] bg-[#E5E5E5] rounded px-4 text-black"
                 />
               </div>
               <button
                 onClick={handleAddBudget}
-                className="mt-9 py-2 px-4 bg-[#90E0EF] hover:bg-[#72bbc7] cursor-pointer rounded text-black text-xl font-medium"
+                className="py-2.5 px-6 bg-[#00B4D8] hover:bg-[#0096c7] cursor-pointer rounded-lg text-white text-lg font-semibold"
               >
                 Add Budget
               </button>
