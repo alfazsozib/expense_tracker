@@ -5,7 +5,7 @@ import { PiSlidersHorizontalFill } from "react-icons/pi";
 import userImage from "../../assets/userImage.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import Chatbot from "../Chatbot"
 const Home = () => {
   const navigate = useNavigate();
   const [summary, setSummary] = useState({
@@ -134,7 +134,9 @@ const Home = () => {
             SIGN OUT
           </button>
         </div>
+      <Chatbot />
       </div>
+
 
       {/* Main Content */}
       <div className="bg-[#CAF0F8] w-full h-screen overflow-y-auto p-12">
