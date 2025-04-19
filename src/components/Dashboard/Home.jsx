@@ -73,13 +73,14 @@ const Home = () => {
         expensesArray.forEach((e) => {
           totalExpenses += e.amount;
           if (!categories[e.note]) {
-            categories[e.note] = { budget: 0, expense: 0 };
+            categories[e.note] = { budget: 0, expense: 0, id:e._id };
           }
           categories[e.note].expense += e.amount;
         });
 
         const categorySummaryData = Object.entries(categories).map(
           ([cat, data]) => ({
+            id: data.id,
             note: cat,
             budget: data.budget,
             expense: data.expense,
@@ -124,6 +125,43 @@ const Home = () => {
     } catch (err) {
       console.error("Error updating name:", err);
       alert("Failed to update name.");
+    }
+  };
+
+  const handleDeleteBudgetItem = async (id) => {
+    console.log(user)
+    try {
+      
+      const res = await axios.delete(
+        `http://localhost:5000/api/budget/${id}`,
+        {userid: user._id},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      // Filter out budgets in that category
+      const updatedCategorySummary = categorySummary.filter(
+        (item) => item._id !== id
+      );
+  
+      // Calculate new fixed and remaining budgets
+      const newFixedBudget = updatedCategorySummary.reduce(
+        (total, item) => total + item.budget,
+        0
+      );
+      const newUsedExpense = updatedCategorySummary.reduce(
+        (total, item) => total + item.expense,
+        0
+      );
+  
+      setFixedBudget(newFixedBudget);
+      setUsedExpense(newUsedExpense);
+      setRemainingBudget(newFixedBudget - newUsedExpense);
+      setCategorySummary(updatedCategorySummary);
+    } catch (err) {
+      console.error("Failed to delete budget item:", err);
+      alert("Failed to delete expense.");
     }
   };
 
@@ -211,29 +249,37 @@ const Home = () => {
           </div>
 
           {/* Monthly Expense Summary */}
-          <div className="bg-white rounded-[20px] border border-[#00000066] p-6 w-full max-w-[800px] m-auto overflow-auto">
+          <div className="bg-white rounded-[20px] border border-[#00000066] p-4 w-full max-w-[1000px] m-auto overflow-auto">
             <h2 className="text-center text-xl font-medium mb-3">
               Monthly Expense Summary
             </h2>
-            <div className="grid grid-cols-4 gap-4 text-center font-medium mb-2 min-w-[700px]">
+            <div className="grid grid-cols-5 gap-2 text-center font-medium mb-2 min-w-[700px]">
               <span className="bg-gray-200 px-3 py-1 rounded">Category</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Budget</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Expense</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Difference</span>
+              <span className="bg-gray-200 px-3 py-1 rounded">Remove</span>
             </div>
 
             {categorySummary.map((item, i) => (
               <div key={i} className="min-w-[700px]">
-                <div className="grid grid-cols-4 gap-4 text-center text-sm py-1">
+                <div className="grid grid-cols-5 gap-4 text-center text-sm py-1">
                   <span>{item.note}</span>
                   <span>£{item.budget}</span>
                   <span>£{item.expense}</span>
                   <span className={item.diff < 0 ? "text-red-600" : "text-green-600"}>
                     £{item.diff}
                   </span>
+                  <span
+                    onClick={() => handleDeleteBudgetItem(item.id)}
+                    className="bg-red-600 p-2 rounded-lg hover:bg-red-800 text-white cursor-pointer"
+                  >
+                    Remove
+                  </span>
                 </div>
               </div>
             ))}
+                    
           </div>
         </div>
       </div>
