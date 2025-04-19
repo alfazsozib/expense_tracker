@@ -32,7 +32,11 @@ const Home = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(resUser.data);
-        setNewName(resUser.data.name);  // Set the name when data is fetched
+        setNewName(resUser.data.name); // Set the name when data is fetched
+
+        // Updated avatar API using RoboHash
+        const avatarUrl = `https://robohash.org/${resUser.data.name || 'Anonymous'}.png?size=120x120&set=set5`;
+        setUser((prevUser) => ({ ...prevUser, image: avatarUrl }));
 
         const resBudget = await axios.get("http://localhost:5000/api/budget", {
           headers: { Authorization: `Bearer ${token}` },
@@ -106,27 +110,23 @@ const Home = () => {
 
   const handleNameUpdate = async () => {
     try {
-      // Ensure the request includes the user ID in the URL
-      console.log(user._id)
-      console.log(user)
       const updateName = await axios.put(
-        `http://localhost:5000/api/user/update-name/${user._id}`, // Pass the user._id here
-        { username: newName }, // Send the updated name in the request body
+        `http://localhost:5000/api/user/update-name/${user._id}`,
+        { username: newName },
         {
-          headers: { Authorization: `Bearer ${token}` }, // Include the token for authorization
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
-      // Handle the response (successfully updated name)
+
       alert("Name updated successfully!");
-      
-      setUser(updateName.data); // Update the user state with the response
-      setEditingName(false); // Stop editing mode
+      setUser(updateName.data);
+      setEditingName(false);
     } catch (err) {
       console.error("Error updating name:", err);
       alert("Failed to update name.");
     }
   };
+
   return (
     <div className="flex min-h-screen max-w-[1440px] mx-auto bg-[#CAF0F8]">
       {/* Sidebar */}
