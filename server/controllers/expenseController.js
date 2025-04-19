@@ -1,4 +1,4 @@
-const Expense = require('../models/expense');
+const Expense = require('../models/Expense');
 
 const addExpense = async (req, res) => {
   const { category, amount } = req.body;
@@ -7,7 +7,8 @@ const addExpense = async (req, res) => {
     const newExpense = new Expense({
       category,
       amount,
-      user: req.user.id, // user should be passed from auth middleware
+      user: req.user.id,
+      createdAt: Date.now() // user should be passed from auth middleware
     });
     await newExpense.save();
     res.status(201).json(newExpense);

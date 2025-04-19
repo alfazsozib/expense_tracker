@@ -73,7 +73,7 @@ const Home = () => {
         expensesArray.forEach((e) => {
           totalExpenses += e.amount;
           if (!categories[e.note]) {
-            categories[e.note] = { budget: 0, expense: 0, id:e._id };
+            categories[e.note] = { budget: 0, expense: 0, id:e._id, createdAt: e.createdAt };
           }
           categories[e.note].expense += e.amount;
         });
@@ -85,6 +85,7 @@ const Home = () => {
             budget: data.budget,
             expense: data.expense,
             diff: data.budget - data.expense,
+            createdAt: data.createdAt
           })
         );
 
@@ -254,8 +255,8 @@ const Home = () => {
               Monthly Expense Summary
             </h2>
             <div className="grid grid-cols-5 gap-2 text-center font-medium mb-2 min-w-[700px]">
-              <span className="bg-gray-200 px-3 py-1 rounded">Category</span>
-              <span className="bg-gray-200 px-3 py-1 rounded">Budget</span>
+              <span className="bg-gray-200 px-3 py-1 rounded">Notes</span>
+              <span className="bg-gray-200 px-3 py-1 rounded">Date</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Expense</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Difference</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Remove</span>
@@ -264,8 +265,9 @@ const Home = () => {
             {categorySummary.map((item, i) => (
               <div key={i} className="min-w-[700px]">
                 <div className="grid grid-cols-5 gap-4 text-center text-sm py-1">
+                  {console.log(item)}
                   <span>{item.note}</span>
-                  <span>£{item.budget}</span>
+                  <span>{new Date(item.createdAt).toISOString().split('T')[0]}</span>
                   <span>£{item.expense}</span>
                   <span className={item.diff < 0 ? "text-red-600" : "text-green-600"}>
                     £{item.diff}
