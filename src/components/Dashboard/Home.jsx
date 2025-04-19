@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaPowerOff, FaUser } from "react-icons/fa";
+import { FaPowerOff, FaUser, FaRegEdit } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
 import userImage from "../../assets/userImage.png";
@@ -10,6 +10,8 @@ import Chatbot from "../Chatbot";
 const Home = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ name: "", image: "" });
+  const [editingName, setEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
 
   const [fixedBudget, setFixedBudget] = useState(0);
   const [usedExpense, setUsedExpense] = useState(0);
@@ -30,6 +32,7 @@ const Home = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(resUser.data);
+        setNewName(resUser.data.name);  // Set the name when data is fetched
 
         const resBudget = await axios.get("http://localhost:5000/api/budget", {
           headers: { Authorization: `Bearer ${token}` },
@@ -97,19 +100,63 @@ const Home = () => {
     navigate("/login");
   };
 
+  const handleNameChange = (e) => {
+    setNewName(e.target.value);
+  };
+
+  const handleNameUpdate = async () => {
+    try {
+      // Ensure the request includes the user ID in the URL
+      console.log(user._id)
+      console.log(user)
+      const updateName = await axios.put(
+        `http://localhost:5000/api/user/update-name/${user._id}`, // Pass the user._id here
+        { username: newName }, // Send the updated name in the request body
+        {
+          headers: { Authorization: `Bearer ${token}` }, // Include the token for authorization
+        }
+      );
+      
+      // Handle the response (successfully updated name)
+      alert("Name updated successfully!");
+      
+      setUser(updateName.data); // Update the user state with the response
+      setEditingName(false); // Stop editing mode
+    } catch (err) {
+      console.error("Error updating name:", err);
+      alert("Failed to update name.");
+    }
+  };
   return (
     <div className="flex min-h-screen max-w-[1440px] mx-auto bg-[#CAF0F8]">
       {/* Sidebar */}
-      <div className="w-[240px] bg-[#CAF0F8] flex flex-col items-center justify-between pt-[60px] pb-[86px]">
+      <div className="w-[340px] bg-[#CAF0F8] flex flex-col items-center justify-between pt-[60px] pb-[86px]">
         <div className="flex flex-col items-center">
           <img
             src={user.image || userImage}
             alt="Profile"
             className="w-[120px] h-[120px] object-cover mb-2 rounded-full"
           />
-          <p className="text-center font-medium text-xl text-[#000000b3]">
-            {user.username || "User Name"}
-          </p>
+          <div className="flex items-center">
+            {editingName ? (
+              <input
+                type="text"
+                value={newName}
+                onChange={handleNameChange}
+                className="text-center font-medium text-xl text-[#000000b3] bg-transparent border-b-2 border-[#000000b3] focus:outline-none"
+                onBlur={handleNameUpdate}
+                autoFocus
+              />
+            ) : (
+              <p className="text-center font-medium text-xl text-[#000000b3]">
+                {user.username || "User Name"}
+              </p>
+            )}
+            <FaRegEdit
+              className="ml-2 cursor-pointer text-[#000000b3] hover:text-blue-600"
+              onClick={() => setEditingName(true)}
+            />
+          </div>
 
           <div className="mt-5 w-[185px] h-2 bg-[#ffffff99] rounded-lg"></div>
 
@@ -120,14 +167,6 @@ const Home = () => {
             >
               <GoHomeFill className="w-[30px] h-[30px]" />
               <span className="text-lg font-light text-[#000000b3]">HOME</span>
-            </Link>
-
-            <Link
-              to="/profile"
-              className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
-            >
-              <FaUser className="w-[30px] h-[30px]" />
-              <span className="text-lg font-light text-[#000000b3]">PROFILE</span>
             </Link>
 
             <Link
