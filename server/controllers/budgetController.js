@@ -2,7 +2,8 @@ const Budget = require('../models/budget');
 
 const addBudget = async (req, res) => {
   const { month, budget } = req.body;
-
+  console.log(req.body);
+  console.log(budget);
   try {
     const newBudget = new Budget({
       month,

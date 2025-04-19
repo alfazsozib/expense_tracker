@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { FaPowerOff, FaUser } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaPowerOff, FaRegEdit } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
 import userImage from "../../assets/userImage.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Chatbot from "../Chatbot";
 
 const UserControl = () => {
   const navigate = useNavigate();
@@ -14,13 +15,65 @@ const UserControl = () => {
   const [budgetMonth, setBudgetMonth] = useState("");
   const [budgetAmount, setBudgetAmount] = useState("");
 
+  const [user, setUser] = useState({ name: "", image: "" });
+  const [editingName, setEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const resUser = await axios.get("http://localhost:5000/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(resUser.data);
+        setNewName(resUser.data.name);
+
+        const avatarUrl = `https://robohash.org/${resUser.data.name || "Anonymous"}.png?size=120x120&set=set5`;
+        setUser((prevUser) => ({ ...prevUser, image: avatarUrl }));
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchData();
+  }, [navigate, token]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
   };
 
+  const handleNameChange = (e) => {
+    setNewName(e.target.value);
+  };
+
+  const handleNameUpdate = async () => {
+    try {
+      const updateName = await axios.put(
+        `http://localhost:5000/api/user/update-name/${user._id}`,
+        { username: newName },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      alert("Name updated successfully!");
+      setUser(updateName.data);
+      setEditingName(false);
+    } catch (err) {
+      console.error("Error updating name:", err);
+      alert("Failed to update name.");
+    }
+  };
+
   const handleAddExpense = async () => {
-    const token = localStorage.getItem("token");
     try {
       await axios.post(
         "http://localhost:5000/api/expenses",
@@ -44,8 +97,8 @@ const UserControl = () => {
   };
 
   const handleAddBudget = async () => {
-    const token = localStorage.getItem("token");
     try {
+      console.log(budgetMonth)
       await axios.post(
         "http://localhost:5000/api/budget",
         {
@@ -70,16 +123,33 @@ const UserControl = () => {
   return (
     <div className="flex min-h-screen max-w-[1440px] mx-auto bg-[#CAF0F8]">
       {/* Sidebar */}
-      <div className="w-[240px] bg-[#CAF0F8] flex flex-col items-center justify-between pt-[60px] pb-[86px]">
+      <div className="w-[340px] bg-[#CAF0F8] flex flex-col items-center justify-between pt-[60px] pb-[86px]">
         <div className="flex flex-col items-center">
           <img
-            src={userImage}
+            src={user.image || userImage}
             alt="Profile"
-            className="w-[120px] h-[120px] object-cover mb-2 rounded-full border-4 border-white shadow-md"
+            className="w-[120px] h-[120px] object-cover mb-2 rounded-full"
           />
-          <p className="text-center font-semibold text-xl text-[#000000b3]">
-            Bob John
-          </p>
+          <div className="flex items-center">
+            {editingName ? (
+              <input
+                type="text"
+                value={newName}
+                onChange={handleNameChange}
+                className="text-center font-medium text-xl text-[#000000b3] bg-transparent border-b-2 border-[#000000b3] focus:outline-none"
+                onBlur={handleNameUpdate}
+                autoFocus
+              />
+            ) : (
+              <p className="text-center font-medium text-xl text-[#000000b3]">
+                {user.username || "User Name"}
+              </p>
+            )}
+            <FaRegEdit
+              className="ml-2 cursor-pointer text-[#000000b3] hover:text-blue-600"
+              onClick={() => setEditingName(true)}
+            />
+          </div>
 
           <div className="mt-5 w-[185px] h-2 bg-[#ffffff99] rounded-lg"></div>
 
@@ -93,21 +163,11 @@ const UserControl = () => {
             </Link>
 
             <Link
-              to="/profile"
-              className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
-            >
-              <FaUser className="w-[30px] h-[30px]" />
-              <span className="text-lg font-light text-[#000000b3]">PROFILE</span>
-            </Link>
-
-            <Link
               to="/user-control"
               className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
             >
               <PiSlidersHorizontalFill className="w-[30px] h-[30px]" />
-              <span className="text-lg font-light text-[#000000b3]">
-                USER CONTROL
-              </span>
+              <span className="text-lg font-light text-[#000000b3]">USER CONTROL</span>
             </Link>
           </div>
         </div>
@@ -121,6 +181,7 @@ const UserControl = () => {
             SIGN OUT
           </button>
         </div>
+        <Chatbot />
       </div>
 
       {/* Main Content */}

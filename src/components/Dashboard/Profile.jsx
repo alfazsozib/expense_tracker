@@ -6,11 +6,11 @@ const Profile = () => {
   return (
     <div className="w-[1440px] h-screen relative flex items-center justify-center overflow-hidden m-auto">
       {/* Blurred Background Image */}
-      <img
+      {/* <img
         src={HomeImage}
         alt="Background"
         className="absolute inset-0 w-[1400px] object-cover blur-[6px] scale-105 z-0"
-      />
+      /> */}
 
       {/* Foreground Content */}
       <div className="w-[360px] bg-white rounded-[10px] p-6 shadow-lg border border-gray-200 z-10">
