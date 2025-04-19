@@ -85,7 +85,7 @@ const UserControl = () => {
 
           <div className="mt-8 space-y-4 w-full">
             <Link
-              to="/"
+              to="/dashboard"
               className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
             >
               <GoHomeFill className="w-[30px] h-[30px]" />

@@ -9,45 +9,35 @@ import Chatbot from "../Chatbot";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [summary, setSummary] = useState({
-    fixedBudget: 0,
-    fixedExpense: 0,
-    usedExpense: 0,
-  });
-  const [categorySummary, setCategorySummary] = useState([]);
   const [user, setUser] = useState({ name: "", image: "" });
 
-  // Fetch token from localStorage
+  const [fixedBudget, setFixedBudget] = useState(0);
+  const [usedExpense, setUsedExpense] = useState(0);
+  const [remainingBudget, setRemainingBudget] = useState(0);
+  const [categorySummary, setCategorySummary] = useState([]);
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token) {
-      navigate("/login"); // redirect to login if no token
+      navigate("/login");
       return;
     }
 
     const fetchData = async () => {
       try {
-        // Fetch user data
         const resUser = await axios.get("http://localhost:5000/api/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(resUser.data);
 
-        console.log("User API response:", resUser.data);
-
-        // Fetch budget
         const resBudget = await axios.get("http://localhost:5000/api/budget", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Fetch expenses
         const resExpenses = await axios.get("http://localhost:5000/api/expenses", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        console.log("Budget API response:", resBudget.data);
-        console.log("Expenses API response:", resExpenses.data);
 
         const budgetArray = Array.isArray(resBudget.data?.data)
           ? resBudget.data.data
@@ -61,41 +51,38 @@ const Home = () => {
           ? resExpenses.data
           : [];
 
-        let totalBudget = 0;
+        let totalBudget = resBudget.data.amount;
         let totalExpenses = 0;
         const categories = {};
 
         budgetArray.forEach((b) => {
           totalBudget += b.amount;
-          if (!categories[b.category]) {
-            categories[b.category] = { budget: 0, expense: 0 };
+          if (!categories[b.note]) {
+            categories[b.note] = { budget: 0, expense: 0 };
           }
-          categories[b.category].budget += b.amount;
+          categories[b.note].budget += b.amount;
         });
 
         expensesArray.forEach((e) => {
           totalExpenses += e.amount;
-          if (!categories[e.category]) {
-            categories[e.category] = { budget: 0, expense: 0 };
+          if (!categories[e.note]) {
+            categories[e.note] = { budget: 0, expense: 0 };
           }
-          categories[e.category].expense += e.amount;
+          categories[e.note].expense += e.amount;
         });
 
         const categorySummaryData = Object.entries(categories).map(
           ([cat, data]) => ({
-            category: cat,
+            note: cat,
             budget: data.budget,
             expense: data.expense,
             diff: data.budget - data.expense,
           })
         );
 
-        setSummary({
-          fixedBudget: totalBudget,
-          fixedExpense: totalExpenses,
-          usedExpense: totalExpenses,
-        });
-
+        setFixedBudget(totalBudget);
+        setUsedExpense(totalExpenses);
+        setRemainingBudget(totalBudget - totalExpenses);
         setCategorySummary(categorySummaryData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -148,9 +135,7 @@ const Home = () => {
               className="flex items-center gap-2 px-4 py-2 rounded-[10px] cursor-pointer hover:bg-white transition-all duration-200"
             >
               <PiSlidersHorizontalFill className="w-[30px] h-[30px]" />
-              <span className="text-lg font-light text-[#000000b3]">
-                USER CONTROL
-              </span>
+              <span className="text-lg font-light text-[#000000b3]">USER CONTROL</span>
             </Link>
           </div>
         </div>
@@ -172,19 +157,18 @@ const Home = () => {
         <div className="w-full bg-white rounded-[20px] p-6 mb-12">
           {/* Budget Cards */}
           <div className="flex flex-wrap justify-center gap-6 mb-8 mt-8">
-            {[ 
-              { title: "Fixed Budget", amount: `£${summary.fixedBudget}` },
-              { title: "Fixed Expense", amount: `£${summary.fixedExpense}` },
-              { title: "Used Expense", amount: `£${summary.usedExpense}` },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-[20px] border-solid border-2 border-[#00000033] p-6 text-center"
-              >
-                <h3 className="text-lg font-medium mb-2">{item.title}</h3>
-                <p className="text-2xl font-bold">{item.amount}</p>
-              </div>
-            ))}
+            <div className="bg-white rounded-[20px] border-solid border-2 border-[#00000033] p-6 text-center">
+              <h3 className="text-lg font-medium mb-2">Fixed Budget</h3>
+              <p className="text-2xl font-bold">£{fixedBudget}</p>
+            </div>
+            <div className="bg-white rounded-[20px] border-solid border-2 border-[#00000033] p-6 text-center">
+              <h3 className="text-lg font-medium mb-2">Remaining Budget</h3>
+              <p className="text-2xl font-bold">£{remainingBudget}</p>
+            </div>
+            <div className="bg-white rounded-[20px] border-solid border-2 border-[#00000033] p-6 text-center">
+              <h3 className="text-lg font-medium mb-2">Used Expense</h3>
+              <p className="text-2xl font-bold">£{usedExpense}</p>
+            </div>
           </div>
 
           {/* Monthly Expense Summary */}
@@ -198,21 +182,20 @@ const Home = () => {
               <span className="bg-gray-200 px-3 py-1 rounded">Expense</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Difference</span>
             </div>
+
             {categorySummary.map((item, i) => (
-              <div
-                key={i}
-                className="grid grid-cols-4 gap-4 text-center text-sm py-1 min-w-[700px]"
-              >
-                <span>{item.category}</span>
-                <span>£{item.budget}</span>
-                <span>£{item.expense}</span>
-                <span className={item.diff < 0 ? "text-red-600" : "text-green-600"}>
-                  £{item.diff}
-                </span>
+              <div key={i} className="min-w-[700px]">
+                <div className="grid grid-cols-4 gap-4 text-center text-sm py-1">
+                  <span>{item.note}</span>
+                  <span>£{item.budget}</span>
+                  <span>£{item.expense}</span>
+                  <span className={item.diff < 0 ? "text-red-600" : "text-green-600"}>
+                    £{item.diff}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
-
         </div>
       </div>
     </div>
