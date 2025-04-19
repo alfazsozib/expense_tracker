@@ -15,8 +15,7 @@ const Home = () => {
     usedExpense: 0,
   });
   const [categorySummary, setCategorySummary] = useState([]);
-  const [newExpense, setNewExpense] = useState({ note: "", amount: 0, category: "" });
-  const [newBudget, setNewBudget] = useState({ amount: 0, category: "" });
+  const [user, setUser] = useState({ name: "", image: "" });
 
   // Fetch token from localStorage
   const token = localStorage.getItem("token");
@@ -29,33 +28,43 @@ const Home = () => {
 
     const fetchData = async () => {
       try {
+        // Fetch user data
+        const resUser = await axios.get("http://localhost:5000/api/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(resUser.data);
+
+        console.log("User API response:", resUser.data);
+
+        // Fetch budget
         const resBudget = await axios.get("http://localhost:5000/api/budget", {
           headers: { Authorization: `Bearer ${token}` },
         });
-    
+
+        // Fetch expenses
         const resExpenses = await axios.get("http://localhost:5000/api/expenses", {
           headers: { Authorization: `Bearer ${token}` },
         });
-    
+
         console.log("Budget API response:", resBudget.data);
         console.log("Expenses API response:", resExpenses.data);
-    
+
         const budgetArray = Array.isArray(resBudget.data?.data)
           ? resBudget.data.data
           : Array.isArray(resBudget.data)
           ? resBudget.data
           : [];
-    
+
         const expensesArray = Array.isArray(resExpenses.data?.data)
           ? resExpenses.data.data
           : Array.isArray(resExpenses.data)
           ? resExpenses.data
           : [];
-    
+
         let totalBudget = 0;
         let totalExpenses = 0;
         const categories = {};
-    
+
         budgetArray.forEach((b) => {
           totalBudget += b.amount;
           if (!categories[b.category]) {
@@ -63,7 +72,7 @@ const Home = () => {
           }
           categories[b.category].budget += b.amount;
         });
-    
+
         expensesArray.forEach((e) => {
           totalExpenses += e.amount;
           if (!categories[e.category]) {
@@ -71,7 +80,7 @@ const Home = () => {
           }
           categories[e.category].expense += e.amount;
         });
-    
+
         const categorySummaryData = Object.entries(categories).map(
           ([cat, data]) => ({
             category: cat,
@@ -80,13 +89,13 @@ const Home = () => {
             diff: data.budget - data.expense,
           })
         );
-    
+
         setSummary({
           fixedBudget: totalBudget,
           fixedExpense: totalExpenses,
           usedExpense: totalExpenses,
         });
-    
+
         setCategorySummary(categorySummaryData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -101,22 +110,18 @@ const Home = () => {
     navigate("/login");
   };
 
-
-
-  
-
   return (
     <div className="flex min-h-screen max-w-[1440px] mx-auto bg-[#CAF0F8]">
       {/* Sidebar */}
       <div className="w-[240px] bg-[#CAF0F8] flex flex-col items-center justify-between pt-[60px] pb-[86px]">
         <div className="flex flex-col items-center">
           <img
-            src={userImage}
+            src={user.image || userImage}
             alt="Profile"
-            className="w-[120px] h-[120px] object-cover mb-2"
+            className="w-[120px] h-[120px] object-cover mb-2 rounded-full"
           />
           <p className="text-center font-medium text-xl text-[#000000b3]">
-            John Doe
+            {user.username || "User Name"}
           </p>
 
           <div className="mt-5 w-[185px] h-2 bg-[#ffffff99] rounded-lg"></div>
@@ -191,6 +196,7 @@ const Home = () => {
               <span className="bg-gray-200 px-3 py-1 rounded">Category</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Budget</span>
               <span className="bg-gray-200 px-3 py-1 rounded">Expense</span>
+              <span className="bg-gray-200 px-3 py-1 rounded">Difference</span>
             </div>
             {categorySummary.map((item, i) => (
               <div

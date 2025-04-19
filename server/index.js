@@ -7,6 +7,7 @@ const expenseRoutes = require('./routes/expense');
 const budgetRoutes = require('./routes/budget');
 const { protect } = require('./middleware/auth'); // Auth middleware (will create in next step)
 const chatRoutes = require('./routes/chat');
+const userRoutes = require('./routes/user');
 
 const cors = require("cors")
 dotenv.config();
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expenseRoutes);  // Protecting the expense routes
 app.use('/api/budget', budgetRoutes);    // Protecting the budget routes
 app.use('/api/chat', chatRoutes);
+app.use("/api/user",userRoutes)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
