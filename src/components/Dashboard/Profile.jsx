@@ -1,7 +1,7 @@
 import React from "react";
 import { FaRegEdit } from "react-icons/fa";
-import HomeImage from "../../assets/Home.jpg";
-import userImage from "../../assets/userImage.png";
+// import HomeImage from "../../assets/Home.jpg";
+import userImage from "../../assets/1.png";
 const Profile = () => {
   return (
     <div className="w-[1440px] h-screen relative flex items-center justify-center overflow-hidden m-auto">

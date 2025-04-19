@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaPowerOff, FaRegEdit } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
-import userImage from "../../assets/userImage.png";
+import userImage from "../../assets/1.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Chatbot from "../Chatbot";
