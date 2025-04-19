@@ -43,26 +43,6 @@ router.get('/', protect, async (req, res) => {
 });
 
 
-// DELETE budget entry by _id
-router.delete("/:id", async (req, res) => {
-  console.log(req)
-  const userId = req.userid;
-  const itemId = req.params.id;
-  
 
-  try {
-    // Make sure the budget item belongs to the logged-in user
-    const deleted = await Budget.findOneAndDelete({ _id: itemId, user: userId });
-
-    if (!deleted) {
-      return res.status(404).json({ message: "Budget item not found or not authorized to delete." });
-    }
-
-    res.status(200).json({ message: "Budget item deleted successfully", deleted });
-  } catch (error) {
-    console.error("Error deleting budget item:", error);
-    res.status(500).json({ message: "Server error while deleting budget item." });
-  }
-});
 
 module.exports = router;

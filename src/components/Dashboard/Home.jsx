@@ -130,17 +130,13 @@ const Home = () => {
   };
 
   const handleDeleteBudgetItem = async (id) => {
-    console.log(user)
+    console.log(user);
     try {
-      
-      const res = await axios.delete(
-        `http://localhost:5000/api/budget/${id}`,
-        {userid: user._id},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-  
+      await axios.delete(`http://localhost:5000/api/expenses/${id}`, {
+        data: { userid: user._id },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       // Filter out budgets in that category
       const updatedCategorySummary = categorySummary.filter(
         (item) => item._id !== id
@@ -160,6 +156,8 @@ const Home = () => {
       setUsedExpense(newUsedExpense);
       setRemainingBudget(newFixedBudget - newUsedExpense);
       setCategorySummary(updatedCategorySummary);
+      window.location.reload();
+
     } catch (err) {
       console.error("Failed to delete budget item:", err);
       alert("Failed to delete expense.");
